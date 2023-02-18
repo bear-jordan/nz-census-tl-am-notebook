@@ -2,7 +2,7 @@ import random
 import datetime
 import pandas as pd
 
-NUM_DAYS = 30
+NUM_DAYS = 28
 NUM_USERS = 3
 
 def gen_user(n=NUM_USERS):
@@ -17,15 +17,21 @@ def gen_sentiment():
         return "sad"
     
 def gen_rating():
-    return random.randint(0, 5)
+    is_breakpoint = random.random() < 0.1
+    
+    if is_breakpoint:
+        return 2
+    else:
+        return 4
+    
     
 def gen_date(day=1):
-    return datetime.datetime(2023, 1, day)
+    return datetime.datetime(2023, 2, day)
 
 def gen_entry(user=1, date=1):
     return [user, date, gen_sentiment(), gen_rating()]
     
-def gen_entries():
+def main():
     users = [gen_user() for i in range(NUM_DAYS)]
     dates = [gen_date(i) for i in range(1,NUM_DAYS+1)]
     
@@ -39,4 +45,4 @@ def gen_entries():
     data.to_csv("dummy-data.csv", index=False)
 
 if __name__ == "__main__":
-    gen_entries()
+    main()
