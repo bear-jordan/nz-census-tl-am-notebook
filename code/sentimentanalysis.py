@@ -25,7 +25,10 @@ def get_sentiment(text):
     sentiment = SentimentIntensityAnalyzer()
     return sentiment.polarity_scores(text)
     
-def main(data):
+def run():
+    data = pd.read_csv("../data/dummy-data.csv")
+    data[DATE_NAME] = pd.to_datetime(data[DATE_NAME], format="%Y-%m-%d", utc=False)
+    
     filterToday = data[DATE_NAME].dt.date == get_yesterday()
     todaysData = data[filterToday]
     users = unique_users(todaysData)
@@ -37,10 +40,4 @@ def main(data):
         if score > SCORE_THRESHOLD:
             results.append([user])
         
-    pd.DataFrame(results, columns=[ID_NAME]).to_csv("sentiments-to-check.csv", index=False)
-        
-if __name__ == "__main__":
-    DATA = pd.read_csv("dummy-data.csv")
-    DATA[DATE_NAME] = pd.to_datetime(DATA[DATE_NAME], format="%Y-%m-%d", utc=False)
-    
-    main(DATA)
+    pd.DataFrame(results, columns=[ID_NAME]).to_csv("../result/sentiments-to-check.csv", index=False)

@@ -26,16 +26,14 @@ def change_detection(user_data):
     if not resultDf[filter].empty:
         return resultDf.loc[filter]
 
-def main(data):
+def run():
+    data = pd.read_csv("../data/dummy-data.csv")
+    data[DATE_NAME] = pd.to_datetime(data[DATE_NAME], format="%Y-%m-%d", utc=False)
+    
     users = unique_users(data)
     todaysResults = []
     for user in users:
         todaysResults.append(change_detection(select_user(data, user)))
         
     finalIDs = pd.concat(todaysResults).loc[:, [ID_NAME]]
-    finalIDs.to_csv("changes-to-check.csv", index=False)
-    
-if __name__ == "__main__":
-    DATA = pd.read_csv("dummy-data.csv")
-    DATA[DATE_NAME] = pd.to_datetime(DATA[DATE_NAME], format="%Y-%m-%d", utc=False)
-    main(DATA)
+    finalIDs.to_csv("../result/changes-to-check.csv", index=False)
