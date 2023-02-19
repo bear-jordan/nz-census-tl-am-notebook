@@ -8,8 +8,8 @@ TEXT_NAME = "sentiment"
 DATE_NAME = "date"
 SCORE_THRESHOLD = 0.5
 
-def get_today():
-    return datetime.date.today()
+def get_yesterday():
+    return datetime.date.today()-datetime.timedelta(days = 1)
 
 def select_user(todaysData, uid=1):
     filter = todaysData[ID_NAME] == uid
@@ -25,9 +25,8 @@ def get_sentiment(text):
     sentiment = SentimentIntensityAnalyzer()
     return sentiment.polarity_scores(text)
     
-    
 def main(data):
-    filterToday = data[DATE_NAME].dt.date == get_today()
+    filterToday = data[DATE_NAME].dt.date == get_yesterday()
     todaysData = data[filterToday]
     users = unique_users(todaysData)
     results = []

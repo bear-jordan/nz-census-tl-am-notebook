@@ -10,8 +10,8 @@ def select_user(data, uid=1):
     filter = data[ID_NAME] == uid
     return data[filter]
 
-def get_today():
-    return datetime.date.today()
+def get_yesterday():
+    return datetime.date.today()-datetime.timedelta(days = 1)
 
 def unique_users(data):
     return data[ID_NAME].unique()
@@ -21,7 +21,7 @@ def change_detection(user_data):
     change, _, _, _ = detect_cusum(signal, threshold=.8, drift=1, ending=False, show=False, ax=None)
     
     resultDf = user_data.loc[:, [ID_NAME, DATE_NAME]].iloc[change]    
-    filter = resultDf[DATE_NAME].dt.date == get_today()
+    filter = resultDf[DATE_NAME].dt.date == get_yesterday()
     
     if not resultDf[filter].empty:
         return resultDf.loc[filter]
