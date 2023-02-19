@@ -4,7 +4,7 @@ import datetime
 
 ID_NAME = "id"
 SIGNAL_NAME = "rating"
-TEXT_NAME = "sentiment"
+TEXT_NAMES = ["sentiment"]
 DATE_NAME = "date"
 SCORE_THRESHOLD = 0.5
 
@@ -18,8 +18,8 @@ def select_user(todaysData, uid=1):
 def unique_users(data):
     return data[ID_NAME].unique()
 
-def load_text(userData):
-    return userData[TEXT_NAME]
+def load_text(userData, field):
+    return userData[field]
     
 def get_sentiment(text):
     sentiment = SentimentIntensityAnalyzer()
@@ -34,10 +34,11 @@ def run():
     users = unique_users(todaysData)
     results = []
     for user in users:
-        userData = select_user(todaysData, user)
-        text = load_text(userData)
-        score = get_sentiment(text)["neg"]
-        if score > SCORE_THRESHOLD:
-            results.append([user])
+        for field in TEXT_NAMES:
+            userData = select_user(todaysData, user)
+            text = load_text(userData, field)
+            score = get_sentiment(text)["neg"]
+            if score > SCORE_THRESHOLD:
+                results.append([user])
         
     pd.DataFrame(results, columns=[ID_NAME]).to_csv("../result/sentiments-to-check.csv", index=False)

@@ -3,7 +3,7 @@ from detecta import detect_cusum
 import datetime
 
 ID_NAME = "id"
-SIGNAL_NAME = "rating"
+SIGNAL_NAMES = ["rating"]
 DATE_NAME = "date"
 
 def select_user(data, uid=1):
@@ -16,8 +16,8 @@ def get_yesterday():
 def unique_users(data):
     return data[ID_NAME].unique()
 
-def change_detection(user_data):
-    signal = user_data[SIGNAL_NAME].to_numpy()
+def change_detection(user_data, signalName):
+    signal = user_data[signalName].to_numpy()
     change, _, _, _ = detect_cusum(signal, threshold=.8, drift=1, ending=False, show=False, ax=None)
     
     resultDf = user_data.loc[:, [ID_NAME, DATE_NAME]].iloc[change]    
@@ -33,7 +33,8 @@ def run():
     users = unique_users(data)
     todaysResults = []
     for user in users:
-        todaysResults.append(change_detection(select_user(data, user)))
+        for signal in SIGNAL_NAMES:
+            todaysResults.append(change_detection(select_user(data, user), signal))
         
     finalIDs = pd.concat(todaysResults).loc[:, [ID_NAME]]
     finalIDs.to_csv("../result/changes-to-check.csv", index=False)
